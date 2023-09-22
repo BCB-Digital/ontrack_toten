@@ -19,12 +19,8 @@ class _HomePageState extends State<HomePage> {
         body: AnimatedContainer(
           duration: const Duration(seconds: 5),
           child: orientacao == Orientation.portrait
-              ? VerticalPage(
-                  onPressed: () {},
-                )
-              : HorizontalPage(
-                  onPressed: () {},
-                ),
+              ? const VerticalPage()
+              : const HorizontalPage(),
         ),);
   }
 }

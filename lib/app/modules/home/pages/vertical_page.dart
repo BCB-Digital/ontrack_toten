@@ -7,8 +7,7 @@ import '../../components/digital_clock_component.dart';
 import '../../components/ontrack_banner.dart';
 
 class VerticalPage extends StatefulWidget {
-  final VoidCallback? onPressed;
-  const VerticalPage({super.key, required this.onPressed});
+  const VerticalPage({super.key});
 
   @override
   State<VerticalPage> createState() => _VerticalPageState();
@@ -118,7 +117,9 @@ class _VerticalPageState extends State<VerticalPage> {
               flex: 1,
             ),
             CustomCentralizedButtom(
-              onPressed: widget.onPressed,
+              onPressed: () {
+                //TODO
+              },
               buttomText: "Gerar Código",
             ),
             const Spacer(

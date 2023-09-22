@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ontrack_toten/app/modules/home/home_page.dart';
@@ -25,24 +26,10 @@ class _MainState extends State<Main> {
   void initState() {
     super.initState();
 
-    // BackendCall.defaultUrl = getBackendUrl();
-    // BackendCall.defaultSubPackage = "adm";
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.immersive
+    );
   }
-
-  // String getBackendUrl() {
-  //   // Se web
-  //   if (kIsWeb) {
-  //     // Busca caminho relativo ao front
-  //     Uri uri = Uri.base.resolve("/api/backend");
-  //     if (uri.host != "localhost" && uri.host != "127.0.0.1") {
-  //       // Se não for localhost (não for dev) -> retorna caminho relativo
-  //       return uri.toString();
-  //     }
-  //   }
-  //   // Usa defaultUrl do arquivo de config
-  //   return EnvironmentAppConfig.defaultUrl;
-  // }
-
 
   @override
   Widget build(BuildContext context) {
