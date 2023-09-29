@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ontrack_toten/app/core/domain/model/codigo_ativacao.dart';
+import 'package:ontrack_toten/app/core/domain/model/erro_code_response.dart';
 import 'package:ontrack_toten/app/core/services/ontrack_service.dart';
 import '../../../core/domain/model/solicitacao_codigo_funcionario.dart';
 import '../../../core/theme/app_colors_theme.dart';
@@ -16,7 +17,7 @@ class HorizontalPage extends StatefulWidget {
 }
 
 class _HorizontalPageState extends State<HorizontalPage> {
-  CodigoAtivacao? data;
+  CodigoAtivacao? codigoAtivacao;
   SolicitacaoCodigoFuncionario? codigoFuncionario;
   final matriculaController = TextEditingController();
   final codigoEmpresaController = TextEditingController();
@@ -30,7 +31,33 @@ class _HorizontalPageState extends State<HorizontalPage> {
   void _buRecuperaCodigoParaPonto() async {
     final response = await OntrackService().postCodigoPonto(codigoFuncionario!);
     setState(() {
-      data = response;
+      if (response is ErroCodeResponse) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: AppColorsTheme.baseColor,
+              title: Text(
+                response.message,
+                style: const TextStyle(color: AppColorsTheme.primaryColor, fontWeight: FontWeight.bold),
+              ),
+              actions: [
+                ElevatedButton(
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: AppColorsTheme.primaryColor, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        codigoAtivacao = response as CodigoAtivacao?;
+      }
     });
   }
 
@@ -38,7 +65,7 @@ class _HorizontalPageState extends State<HorizontalPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        data == null
+        codigoAtivacao == null
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

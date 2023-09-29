@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:ontrack_toten/app/core/domain/model/codigo_ativacao.dart';
+import 'package:ontrack_toten/app/core/domain/model/erro_code_response.dart';
+import 'package:ontrack_toten/app/core/domain/model/solicitacao_codigo_funcionario.dart';
+import 'package:ontrack_toten/app/core/services/ontrack_service.dart';
 
 import '../../../core/theme/app_colors_theme.dart';
 import '../../components/custom_centralized_buttom.dart';
@@ -14,11 +18,51 @@ class VerticalPage extends StatefulWidget {
 }
 
 class _VerticalPageState extends State<VerticalPage> {
+  CodigoAtivacao? codigoAtivacao;
+  SolicitacaoCodigoFuncionario? codigoFuncionario;
+  final matriculaController = TextEditingController();
+  final codigoEmpresaController = TextEditingController();
+
+
+  void _buRecuperaCodigoParaPonto() async {
+    final response = await OntrackService().postCodigoPonto(codigoFuncionario!);
+    setState(() {
+      if (response is ErroCodeResponse) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: AppColorsTheme.baseColor,
+              title: Text(
+                response.message,
+                style: const TextStyle(color: AppColorsTheme.primaryColor, fontWeight: FontWeight.bold),
+              ),
+              actions: [
+                ElevatedButton(
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: AppColorsTheme.primaryColor, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        codigoAtivacao = response as CodigoAtivacao?;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Column(
+        codigoAtivacao == null
+        ? Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -79,31 +123,45 @@ class _VerticalPageState extends State<VerticalPage> {
                 ),
                 const SizedBox(width: 24),
                 Column(
-                  children: const [
+                  children: [
                     SizedBox(
                       width: 360,
                       child: TextField(
-                        style: TextStyle(
+                        controller: matriculaController,
+                        onChanged: (value) {
+                          setState(() {
+                            codigoFuncionario?.matricula = value;
+                          });
+                        },
+                        keyboardType: TextInputType.text,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: AppColorsTheme.primaryColor,
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Informe sua matrícula',
                         ),
                       ),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     SizedBox(
                       width: 360,
                       child: TextField(
-                        style: TextStyle(
+                        controller: codigoEmpresaController,
+                        keyboardType: TextInputType.text,
+                        onChanged: (value) {
+                          setState(() {
+                            codigoFuncionario?.codigoEmpresa = value;
+                          });
+                        },
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: AppColorsTheme.primaryColor,
                         ),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'Informe o código da empresa',
                         ),
@@ -117,9 +175,7 @@ class _VerticalPageState extends State<VerticalPage> {
               flex: 1,
             ),
             CustomCentralizedButtom(
-              onPressed: () {
-                //TODO
-              },
+              onPressed: _buRecuperaCodigoParaPonto,
               buttomText: "Gerar Código",
             ),
             const Spacer(
@@ -137,7 +193,8 @@ class _VerticalPageState extends State<VerticalPage> {
               ),
             ),
           ],
-        ),
+        )
+        : Container(),
         Positioned(
           left: -125,
           bottom: -150,

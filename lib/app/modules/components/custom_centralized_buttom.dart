@@ -18,7 +18,7 @@ class _CustomCentralizedButtomState extends State<CustomCentralizedButtom> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        GestureDetector(
+        InkWell(
           onTap: widget.onPressed,
           child: Container(
             width: 320,
